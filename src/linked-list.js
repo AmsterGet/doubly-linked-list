@@ -1,6 +1,7 @@
 const Node = require('./node');
 
 class LinkedList {
+
     constructor() {
         this._head=null;
         this._tail=null;
@@ -8,16 +9,17 @@ class LinkedList {
     }
 
     append(data) {
-        var node = new Node(data);
+        var x = new Node(data);
         if (this.length) {
-            node.prev = this._tail;
-            this._tail.next = node;
-            this._tail = node;
+            x.prev = this._tail;
+            this._tail.next = x;
+            this._tail = x;
         } else {
-            this._head = node;
-            this._tail = node;
+            this._head = x;
+            this._tail = x;
         }
         this.length++;
+        return this;
     }
 
     head() {
@@ -40,6 +42,22 @@ class LinkedList {
 
     insertAt(index, data) {
 
+        if (!this.length){
+            this.append(data);
+            return this;
+        }
+
+        var i, x=this._head,y=new Node();
+        while (index>0){
+            x=x.next;
+            index--;
+        }
+        y.data=data;
+        y.next=x;
+        y.prev=x.prev;
+        x.prev=y;
+        y.prev.next=y;
+        this.length++;
     }
 
     isEmpty() {
@@ -54,13 +72,35 @@ class LinkedList {
         this._tail.next=null;
         this._tail.prev=null;
         this.length=0;
+        return this;
     }
 
-    deleteAt(index) {
-
+    deleteAt(index) {//парочка костылей:D
+        var i,x=this._head;
+        if (index===1 && this.length<=1){
+            this._head.next=null;
+            this._tail=this._head;
+            this.length--;
+            return this;
+        }
+        if (index===0 && this.length<=1){
+            this._tail.prev=null;
+            this._head=this._tail;
+            this.length--;
+            return this;
+        }
+        while (index>0){
+            x=x.next;
+            index--;
+        }
+        x.next.prev=x.prev;
+        x.prev.next=x.next;
+        x=null;
+        this.length--;
     }
 
     reverse() {
+        if (this._tail===this._head) return this;
         var x=this._tail,i,buf;
         this._head=x;
         for(i=0;i<this.length;i++){
